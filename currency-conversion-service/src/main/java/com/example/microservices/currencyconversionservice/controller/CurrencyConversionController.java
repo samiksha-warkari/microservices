@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ public class CurrencyConversionController {
 
 	@Autowired
 	private CurrencyExchangeServiceProxy currencyExchangeServiceProxy;
+	
 
 	@GetMapping("/currency-converter/from/{from}/to/{to}/quantity/{quantity}")
 	public CurrencyConversionBean convertCurrency(@PathVariable String from, @PathVariable String to,
@@ -31,7 +33,7 @@ public class CurrencyConversionController {
 				uriVariables);
 		CurrencyConversionBean response = responseEntity.getBody();
 		return new CurrencyConversionBean(response.getId(), from, to, response.getConversionMultiple(), quantity,
-				quantity.multiply(response.getConversionMultiple()));
+				quantity.multiply(response.getConversionMultiple()),response.getPort());
 	}
 
 	@GetMapping("/currency-converter-feign/from/{from}/to/{to}/quantity/{quantity}")
@@ -40,6 +42,6 @@ public class CurrencyConversionController {
 
 		CurrencyConversionBean response = currencyExchangeServiceProxy.retrieveExchangeValue(from, to);
 		return new CurrencyConversionBean(response.getId(), from, to, response.getConversionMultiple(), quantity,
-				quantity.multiply(response.getConversionMultiple()));
+				quantity.multiply(response.getConversionMultiple()),response.getPort());
 	}
 }
